@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Newspaper, Radio } from "lucide-react";
+import { Newspaper, Radio, Send } from "lucide-react";
 import type { ReactNode } from "react";
 import { useApp } from "./AppProviders";
 import { Onboarding } from "./Onboarding";
@@ -32,16 +32,27 @@ export function AppShell({ children }: { children: ReactNode }) {
             "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--background) 70%, transparent) 35%, var(--background) 90%)",
         }}
       />
-      <BottomNav newsLabel={t.news} liveLabel={t.live} path={path} />
+      <BottomNav newsLabel={t.news} liveLabel={t.live} channelLabel={t.channel} path={path} />
     </div>
   );
 }
 
 
-function BottomNav({ newsLabel, liveLabel, path }: { newsLabel: string; liveLabel: string; path: string }) {
+function BottomNav({
+  newsLabel,
+  liveLabel,
+  channelLabel,
+  path,
+}: {
+  newsLabel: string;
+  liveLabel: string;
+  channelLabel: string;
+  path: string;
+}) {
   const items = [
     { to: "/", label: newsLabel, icon: Newspaper, active: path === "/" },
     { to: "/live", label: liveLabel, icon: Radio, active: path.startsWith("/live") },
+    { to: "/channel", label: channelLabel, icon: Send, active: path.startsWith("/channel") },
   ] as const;
   return (
     <nav
@@ -49,7 +60,7 @@ function BottomNav({ newsLabel, liveLabel, path }: { newsLabel: string; liveLabe
       style={{ paddingBottom: "max(var(--safe-bottom), 8px)" }}
     >
       <div className="hr-gradient absolute inset-x-0 top-0" />
-      <div className="wrap grid grid-cols-2">
+      <div className="wrap grid grid-cols-3">
         {items.map(({ to, label, icon: Icon, active }) => (
           <Link
             key={to}
@@ -73,4 +84,3 @@ function BottomNav({ newsLabel, liveLabel, path }: { newsLabel: string; liveLabe
     </nav>
   );
 }
-

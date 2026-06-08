@@ -11,6 +11,12 @@ export interface Dict {
   watchInChannel: string; onboardTitle: string; onboardBody: string; onboardCta: string;
   privacy: string; disclaimer: string; language: string; fng: string; market: string;
   refreshing: string; feedLockHeader: string;
+  channel: string; channelTabSub: string; openInTelegram: string; joinChannel: string;
+  skipForNow: string; livePinnedTitle: string; livePinnedSub: string; liveStickyCta: string;
+  socialProof: (n: number) => string; channelInside: string;
+  channelPost1Title: string; channelPost1Sub: string;
+  channelPost2Title: string; channelPost2Sub: string;
+  channelPost3Title: string; channelPost3Sub: string;
 }
 
 const dict: Record<Lang, Dict> = {
@@ -47,6 +53,22 @@ const dict: Record<Lang, Dict> = {
     market: "Market",
     refreshing: "Refreshing",
     feedLockHeader: "More on the wire",
+    channel: "Channel",
+    channelTabSub: "Inside the broadcast",
+    openInTelegram: "Open in Telegram",
+    joinChannel: "Join the channel",
+    skipForNow: "Skip for now",
+    livePinnedTitle: "Live commentary — in the channel",
+    livePinnedSub: "Frame-by-frame calls, odds shifts, and clutch moments",
+    liveStickyCta: "Open live wire in Telegram",
+    socialProof: (n: number) => `${n.toLocaleString("en-US")} on the wire now`,
+    channelInside: "What's inside",
+    channelPost1Title: "Match-day live commentary",
+    channelPost1Sub: "Round-by-round calls and odds shifts",
+    channelPost2Title: "Pre-market crypto desk",
+    channelPost2Sub: "Catalysts, on-chain flows, fast takes",
+    channelPost3Title: "Casino signal log",
+    channelPost3Sub: "Drops, RTP shifts, fresh promos",
   },
   ru: {
     news: "Новости",
@@ -81,6 +103,22 @@ const dict: Record<Lang, Dict> = {
     market: "Рынок",
     refreshing: "Обновляем",
     feedLockHeader: "Ещё в эфире",
+    channel: "Канал",
+    channelTabSub: "Внутри эфира",
+    openInTelegram: "Открыть в Telegram",
+    joinChannel: "Вступить в канал",
+    skipForNow: "Позже",
+    livePinnedTitle: "Лайв-комментарии — в канале",
+    livePinnedSub: "Покадровые разборы, движение коэффициентов и клатч-моменты",
+    liveStickyCta: "Открыть прямой эфир в Telegram",
+    socialProof: (n: number) => `${n.toLocaleString("ru-RU")} сейчас на линии`,
+    channelInside: "Что внутри",
+    channelPost1Title: "Лайв-комментарии матчей",
+    channelPost1Sub: "Раунд за раундом и движение коэффициентов",
+    channelPost2Title: "Утренний крипто-деск",
+    channelPost2Sub: "Катализаторы, on-chain потоки, быстрые тейки",
+    channelPost3Title: "Журнал казино-сигналов",
+    channelPost3Sub: "Дропы, RTP, свежие промо",
   },
   es: {
     news: "Noticias",
@@ -115,6 +153,22 @@ const dict: Record<Lang, Dict> = {
     market: "Mercado",
     refreshing: "Actualizando",
     feedLockHeader: "Más en directo",
+    channel: "Canal",
+    channelTabSub: "Dentro del directo",
+    openInTelegram: "Abrir en Telegram",
+    joinChannel: "Unirse al canal",
+    skipForNow: "Más tarde",
+    livePinnedTitle: "Comentarios en vivo — en el canal",
+    livePinnedSub: "Jugada a jugada, movimiento de cuotas y momentos clutch",
+    liveStickyCta: "Abrir el directo en Telegram",
+    socialProof: (n: number) => `${n.toLocaleString("es-ES")} en línea ahora`,
+    channelInside: "Qué hay dentro",
+    channelPost1Title: "Comentarios de partidos en vivo",
+    channelPost1Sub: "Ronda a ronda y movimientos de cuotas",
+    channelPost2Title: "Mesa cripto pre-mercado",
+    channelPost2Sub: "Catalizadores, flujos on-chain, tomas rápidas",
+    channelPost3Title: "Bitácora de señales de casino",
+    channelPost3Sub: "Drops, RTP, promos frescas",
   },
 };
 

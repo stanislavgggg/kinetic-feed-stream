@@ -35,6 +35,8 @@ export function NewsView() {
   const { t, lang, config, gateLocked } = useApp();
   const [cat, setCat] = useState<NewsCategory>("all");
   const [lockViewed, setLockViewed] = useState(false);
+  const [lockVisible, setLockVisible] = useState(false);
+  const lockSentinelRef = useRef<HTMLDivElement>(null);
 
   const q = useQuery({
     queryKey: ["news", cat],
@@ -50,6 +52,17 @@ export function NewsView() {
       setLockViewed(true);
     }
   }, [gateLocked, q.data, lockViewed]);
+
+  useEffect(() => {
+    const el = lockSentinelRef.current;
+    if (!el) { setLockVisible(false); return; }
+    const io = new IntersectionObserver(
+      ([entry]) => setLockVisible(entry.isIntersecting),
+      { rootMargin: "0px 0px -20% 0px", threshold: 0.01 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [gateLocked, q.data]);
 
   const items = q.data?.items ?? [];
   const market = q.data?.market;
@@ -110,15 +123,17 @@ export function NewsView() {
         ))}
 
         {showLock && (
-          <LockedStack
-            items={lockedItems}
-            onTap={() => openChannelFlow(config, "feed_lock")}
-            t={t}
-          />
+          <div ref={lockSentinelRef}>
+            <LockedStack
+              items={lockedItems}
+              onTap={() => openChannelFlow(config, "feed_lock")}
+              t={t}
+            />
+          </div>
         )}
       </div>
 
-      {gateLocked && (
+      {gateLocked && showLock && lockVisible && (
         <StickyCTA
           label={t.subscribe}
           onClick={() => openChannelFlow(config, "feed_lock_sticky")}
@@ -308,7 +323,12 @@ function LockedStack({
   const ref = useRef<HTMLButtonElement>(null);
   return (
     <div className="relative mt-1">
-      <div className="lower-third mb-2 text-muted-foreground">{t.feedLockHeader}</div>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <span className="lower-third text-muted-foreground">{t.feedLockHeader}</span>
+        <span className="lower-third inline-flex items-center gap-1.5 text-signal">
+          <span className="live-dot" /> {t.socialProof(3240)}
+        </span>
+      </div>
       <div className="relative overflow-hidden rounded-2xl surface-elevated edge-glow">
         <div className="space-y-px">
           {items.map((it) => (

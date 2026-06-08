@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LiveRouteImport } from './routes/live'
+import { Route as ChannelRouteImport } from './routes/channel'
 import { Route as IndexRouteImport } from './routes/index'
 
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -23,6 +24,11 @@ const LiveRoute = LiveRouteImport.update({
   path: '/live',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChannelRoute = ChannelRouteImport.update({
+  id: '/channel',
+  path: '/channel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,30 +37,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/channel': typeof ChannelRoute
   '/live': typeof LiveRoute
   '/privacy': typeof PrivacyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/channel': typeof ChannelRoute
   '/live': typeof LiveRoute
   '/privacy': typeof PrivacyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/channel': typeof ChannelRoute
   '/live': typeof LiveRoute
   '/privacy': typeof PrivacyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/live' | '/privacy'
+  fullPaths: '/' | '/channel' | '/live' | '/privacy'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/live' | '/privacy'
-  id: '__root__' | '/' | '/live' | '/privacy'
+  to: '/' | '/channel' | '/live' | '/privacy'
+  id: '__root__' | '/' | '/channel' | '/live' | '/privacy'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChannelRoute: typeof ChannelRoute
   LiveRoute: typeof LiveRoute
   PrivacyRoute: typeof PrivacyRoute
 }
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LiveRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/channel': {
+      id: '/channel'
+      path: '/channel'
+      fullPath: '/channel'
+      preLoaderRoute: typeof ChannelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChannelRoute: ChannelRoute,
   LiveRoute: LiveRoute,
   PrivacyRoute: PrivacyRoute,
 }

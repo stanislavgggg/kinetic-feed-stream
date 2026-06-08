@@ -2,9 +2,11 @@ import { useApp } from "./AppProviders";
 import { LangSwitcher } from "./LangSwitcher";
 import { BRAND } from "@/lib/brand";
 import { haptic } from "@/lib/telegram";
+import { openChannelFlow, api } from "@/lib/funnel";
+import { Send } from "lucide-react";
 
 export function Onboarding() {
-  const { t, setOnboarded } = useApp();
+  const { t, setOnboarded, config } = useApp();
   return (
     <div
       className="relative min-h-[100svh] wrap flex flex-col overflow-hidden"
@@ -73,12 +75,26 @@ export function Onboarding() {
         </div>
       </div>
 
-      <button
-        onClick={() => { haptic("medium"); setOnboarded(true); }}
-        className="press-btn signal-sweep relative overflow-hidden mb-6 w-full btn-premium text-base"
-      >
-        {t.onboardCta}
-      </button>
+      <div className="mb-3 flex flex-col gap-2">
+        <button
+          onClick={() => {
+            haptic("medium");
+            api.event("cta_tap", { surface: "onboarding_join" });
+            setOnboarded(true);
+            openChannelFlow(config, "onboarding_join");
+          }}
+          className="press-btn signal-sweep relative overflow-hidden w-full btn-premium text-base inline-flex items-center justify-center gap-2"
+        >
+          <Send size={18} />
+          {t.joinChannel}
+        </button>
+        <button
+          onClick={() => { haptic("light"); setOnboarded(true); }}
+          className="press-btn w-full rounded-2xl border border-border/60 px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition"
+        >
+          {t.onboardCta} · {t.skipForNow}
+        </button>
+      </div>
 
 
       <p className="pb-6 text-center text-[11px] text-muted-foreground">{t.disclaimer}</p>
