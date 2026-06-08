@@ -7,18 +7,19 @@ export function Onboarding() {
   const { t, setOnboarded } = useApp();
   return (
     <div className="relative min-h-[100dvh] wrap flex flex-col overflow-hidden">
-      {/* Aurora background */}
+      {/* Aurora background — cool obsidian + warm signal */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-32 -left-24 h-[420px] w-[420px] rounded-full bg-signal/30 blur-3xl glow-pulse" />
-        <div className="absolute -bottom-40 -right-24 h-[420px] w-[420px] rounded-full bg-ember/25 blur-3xl glow-pulse" style={{ animationDelay: "-1.2s" }} />
-        <div className="absolute inset-0 scanlines opacity-40" />
+        <div className="absolute -top-40 -left-32 h-[460px] w-[460px] rounded-full bg-signal/25 blur-3xl glow-pulse" />
+        <div className="absolute top-40 -right-40 h-[420px] w-[420px] rounded-full bg-ember/20 blur-3xl glow-pulse" style={{ animationDelay: "-1.2s" }} />
+        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 h-[480px] w-[480px] rounded-full" style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--signal) 12%, transparent), transparent 70%)" }} />
+        <div className="absolute inset-0 scanlines opacity-30" />
       </div>
 
       <div className="flex items-center justify-between py-3">
         <div className="flex items-center gap-2">
           <span className="relative inline-grid place-items-center">
-            <span className="absolute -inset-1 rounded-full bg-signal/40 blur-md glow-pulse" />
-            <span className="relative inline-block h-2.5 w-2.5 rounded-full bg-signal" />
+            <span className="absolute -inset-1.5 rounded-full bg-signal/40 blur-md glow-pulse" />
+            <span className="relative inline-block h-2.5 w-2.5 rounded-full bg-signal shadow-[0_0_10px_var(--color-signal-glow)]" />
           </span>
           <span className="display uppercase text-xl font-extrabold tracking-tight headline-gradient">{BRAND.name}</span>
         </div>
@@ -26,7 +27,7 @@ export function Onboarding() {
       </div>
 
       <div className="flex flex-1 flex-col justify-center py-10">
-        <div className="inline-flex items-center gap-2 self-start rounded-full border border-signal/40 bg-signal/10 px-3 py-1 lower-third text-signal">
+        <div className="inline-flex items-center gap-2 self-start rounded-full btn-signal-soft px-3 py-1 lower-third">
           <span className="live-dot" /> ON AIR · 24/7
         </div>
 
@@ -45,7 +46,7 @@ export function Onboarding() {
           ].map((x, i) => (
             <div
               key={x.c}
-              className="edge-glow relative rounded-xl border border-border bg-card/70 backdrop-blur p-3 card-in"
+              className="edge-glow relative surface-card rounded-xl p-3 card-in"
               style={{ animationDelay: `${i * 90}ms` }}
             >
               <div className={`lower-third ${x.k}`}>● {x.c}</div>
@@ -54,14 +55,14 @@ export function Onboarding() {
           ))}
         </div>
 
-        <div className="mt-8 grid grid-cols-3 divide-x divide-border/70 rounded-xl border border-border bg-card/60 backdrop-blur text-center">
+        <div className="mt-8 grid grid-cols-3 surface-card rounded-xl text-center overflow-hidden">
           {[
             { k: "Sources", v: "120+" },
             { k: "Refresh", v: "60s" },
             { k: "Languages", v: "EN·RU·ES" },
-          ].map((s) => (
-            <div key={s.k} className="px-2 py-3">
-              <div className="display text-lg">{s.v}</div>
+          ].map((s, i) => (
+            <div key={s.k} className={`px-2 py-3 ${i < 2 ? "border-r border-border/60" : ""}`}>
+              <div className="display text-lg headline-gradient">{s.v}</div>
               <div className="lower-third text-muted-foreground">{s.k}</div>
             </div>
           ))}
@@ -70,7 +71,7 @@ export function Onboarding() {
 
       <button
         onClick={() => { haptic("medium"); setOnboarded(true); }}
-        className="press-btn relative overflow-hidden signal-sweep mb-6 h-14 w-full rounded-xl bg-signal text-signal-foreground display uppercase tracking-widest text-base glow-signal"
+        className="press-btn signal-sweep relative overflow-hidden mb-6 h-14 w-full rounded-xl btn-signal display uppercase tracking-widest text-base"
       >
         {t.onboardCta}
       </button>

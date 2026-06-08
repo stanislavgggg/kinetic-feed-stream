@@ -25,6 +25,11 @@ const catBg: Record<NewsItem["category"], string> = {
   casino: "bg-cat-casino/15 border-cat-casino/40",
   esports: "bg-cat-esports/15 border-cat-esports/40",
 };
+const catStripe: Record<NewsItem["category"], string> = {
+  crypto: "linear-gradient(180deg, var(--color-cat-crypto), transparent)",
+  casino: "linear-gradient(180deg, var(--color-cat-casino), transparent)",
+  esports: "linear-gradient(180deg, var(--color-cat-esports), transparent)",
+};
 
 export function NewsView() {
   const { t, lang, config, gateLocked } = useApp();
@@ -67,10 +72,8 @@ export function NewsView() {
               <button
                 key={c.key}
                 onClick={() => { haptic("selection"); setCat(c.key); }}
-                className={`press-btn h-9 rounded-full px-4 text-sm lower-third whitespace-nowrap border transition ${
-                  active
-                    ? "bg-foreground text-background border-foreground shadow-[0_6px_20px_-8px_rgba(0,0,0,0.6)]"
-                    : "border-border text-muted-foreground hover:text-foreground"
+                className={`press-btn h-9 rounded-full px-4 text-sm lower-third whitespace-nowrap transition ${
+                  active ? "chip-active" : "chip-idle hover:text-foreground"
                 }`}
               >
                 {c.label(lang, t)}
@@ -125,12 +128,12 @@ export function NewsView() {
 }
 
 function HeroSkeleton() {
-  return <div className="h-64 animate-pulse rounded-2xl border border-border bg-card" />;
+  return <div className="h-64 animate-pulse rounded-2xl surface-card" />;
 }
 
 function NewsSkeleton() {
   return (
-    <div className="rounded-xl border border-border bg-card p-4 animate-pulse">
+    <div className="rounded-xl surface-card p-4 animate-pulse">
       <div className="h-3 w-20 bg-muted rounded" />
       <div className="mt-3 h-4 w-3/4 bg-muted rounded" />
       <div className="mt-2 h-3 w-1/2 bg-muted rounded" />
@@ -148,7 +151,7 @@ function HeroCard({ item, lang }: { item: NewsItem; lang: Lang }) {
   return (
     <button
       onClick={onTap}
-      className="card-in edge-glow group relative overflow-hidden rounded-2xl border border-border bg-card text-left press-btn"
+      className="card-in edge-glow group relative overflow-hidden rounded-2xl surface-elevated text-left press-btn"
     >
       {item.image && imgOk ? (
         <div className="relative aspect-[16/10] w-full overflow-hidden">
@@ -159,22 +162,22 @@ function HeroCard({ item, lang }: { item: NewsItem; lang: Lang }) {
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-transparent" />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--surface-1) 60%, transparent) 50%, var(--surface-1) 100%)" }} />
           <div className="absolute left-3 top-3 flex items-center gap-2">
             <span className={`lower-third rounded-md border px-2 py-1 ${catBg[item.category]} ${catColor[item.category]}`}>
               ● {item.category.toUpperCase()}
             </span>
-            <span className="lower-third rounded-md border border-signal/40 bg-signal/15 px-2 py-1 text-signal inline-flex items-center gap-1">
+            <span className="lower-third rounded-md btn-signal-soft px-2 py-1 inline-flex items-center gap-1">
               <span className="live-dot" /> TOP
             </span>
           </div>
         </div>
       ) : (
         <div className="relative h-40 w-full overflow-hidden tape-stripe">
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 0%, var(--surface-1) 100%)" }} />
         </div>
       )}
-      <div className="relative -mt-10 p-4">
+      <div className="relative -mt-12 p-4">
         <h2 className="display text-[26px] leading-[1.02] uppercase">
           <span className="headline-gradient">{item.title}</span>
         </h2>
@@ -187,8 +190,8 @@ function HeroCard({ item, lang }: { item: NewsItem; lang: Lang }) {
             <span>·</span>
             <span className="mono">{relTime(item.published_at, lang)}</span>
           </div>
-          <span className="inline-flex items-center gap-1 text-signal lower-third">
-            Read <ArrowUpRight size={12} />
+          <span className="inline-flex items-center gap-1 lower-third signal-text">
+            Read <ArrowUpRight size={12} className="text-ember" />
           </span>
         </div>
       </div>
@@ -205,18 +208,21 @@ function NewsCard({ item, lang, delay }: { item: NewsItem; lang: Lang; delay: nu
   return (
     <button
       onClick={onTap}
-      className="press-btn card-in text-left rounded-xl border border-border bg-card/90 p-4 hover:border-foreground/20 transition relative overflow-hidden"
+      className="press-btn card-in text-left rounded-xl surface-card p-4 hover:border-foreground/15 transition relative overflow-hidden"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <span className={`absolute left-0 top-0 h-full w-[3px] ${item.category === "crypto" ? "bg-cat-crypto" : item.category === "casino" ? "bg-cat-casino" : "bg-cat-esports"}`} />
-      <div className="flex items-center gap-2 text-[11px]">
+      <span
+        className="absolute left-0 top-0 h-full w-[3px]"
+        style={{ background: catStripe[item.category] }}
+      />
+      <div className="flex items-center gap-2 text-[11px] pl-1">
         <span className={`lower-third ${catColor[item.category]}`}>● {item.category.toUpperCase()}</span>
         <span className="text-muted-foreground">·</span>
         <span className="text-muted-foreground truncate">{item.source}</span>
         <span className="text-muted-foreground">·</span>
         <span className="text-muted-foreground mono">{relTime(item.published_at, lang)}</span>
       </div>
-      <div className="mt-2 flex gap-3">
+      <div className="mt-2 flex gap-3 pl-1">
         <div className="flex-1 min-w-0">
           <h3 className="display text-[19px] leading-snug line-clamp-2 uppercase">{item.title}</h3>
           {item.summary && (
@@ -273,7 +279,7 @@ function MarketStrip({
         {market.coins.map((c) => {
           const up = (c.change_24h ?? 0) >= 0;
           return (
-            <div key={c.symbol} className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-card/80 backdrop-blur px-3 h-9">
+            <div key={c.symbol} className="inline-flex shrink-0 items-center gap-2 rounded-full surface-card px-3 h-9">
               <span className="lower-third">{c.symbol.toUpperCase()}</span>
               <span className="text-sm tabular-nums mono">
                 {c.price != null ? (c.price >= 1 ? c.price.toLocaleString(undefined, { maximumFractionDigits: 2 }) : c.price.toPrecision(3)) : "—"}
@@ -302,7 +308,7 @@ function LockedStack({
   return (
     <div className="relative mt-1">
       <div className="lower-third mb-2 text-muted-foreground">{t.feedLockHeader}</div>
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card edge-glow">
+      <div className="relative overflow-hidden rounded-2xl surface-elevated edge-glow">
         <div className="space-y-px">
           {items.map((it) => (
             <div key={String(it.id)} className="p-4 border-b border-border/60">
@@ -312,18 +318,18 @@ function LockedStack({
             </div>
           ))}
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/75 to-background" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, color-mix(in oklab, var(--surface-1) 10%, transparent) 0%, color-mix(in oklab, var(--surface-1) 75%, transparent) 50%, var(--surface-1) 100%)" }} />
         <button
           ref={ref}
           onClick={onTap}
           className="press-btn absolute inset-0 flex flex-col items-center justify-end gap-3 p-6 text-center"
         >
-          <div className="grid h-14 w-14 place-items-center rounded-full bg-signal/15 text-signal border border-signal/40 glow-signal">
+          <div className="grid h-14 w-14 place-items-center rounded-full btn-signal-soft">
             <Lock size={26} />
           </div>
           <h3 className="display text-2xl uppercase headline-gradient">{t.fullReadsInChannel}</h3>
           <p className="text-sm text-muted-foreground">{t.stickySub}</p>
-          <span className="press-btn signal-sweep relative overflow-hidden mt-2 mb-6 inline-flex h-12 items-center rounded-lg bg-signal px-5 text-signal-foreground lower-third glow-signal">
+          <span className="press-btn signal-sweep relative overflow-hidden mt-2 mb-6 inline-flex h-12 items-center rounded-lg btn-signal px-5 lower-third">
             {t.subscribe}
           </span>
         </button>
@@ -334,12 +340,12 @@ function LockedStack({
 
 function StickyCTA({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <div className="fixed inset-x-0 bottom-[64px] z-30 pointer-events-none pb-[env(safe-area-inset-bottom)]">
+    <div className="fixed inset-x-0 bottom-[68px] z-30 pointer-events-none pb-[env(safe-area-inset-bottom)]">
       <div className="wrap pointer-events-none">
         <div className="pointer-events-auto mb-2 rounded-2xl glass p-2 shadow-2xl">
           <button
             onClick={onClick}
-            className="press-btn signal-sweep relative overflow-hidden h-12 w-full rounded-lg bg-signal text-signal-foreground lower-third glow-signal"
+            className="press-btn signal-sweep relative overflow-hidden h-12 w-full rounded-lg btn-signal lower-third"
           >
             {label}
           </button>
@@ -351,8 +357,11 @@ function StickyCTA({ label, onClick }: { label: string; onClick: () => void }) {
 
 function EmptyState({ text }: { text: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-      {text}
+    <div className="surface-card rounded-2xl p-8 text-center">
+      <div className="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full btn-signal-soft">
+        <span className="live-dot" />
+      </div>
+      <div className="text-sm text-muted-foreground">{text}</div>
     </div>
   );
 }
