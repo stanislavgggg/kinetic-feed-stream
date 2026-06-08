@@ -44,9 +44,10 @@ export function LiveView() {
                 <button
                   key={g}
                   onClick={() => { haptic("selection"); setGame(g); }}
-                  className={`press-btn h-9 rounded-full px-4 text-sm lower-third whitespace-nowrap transition ${
+                  className={`press-btn h-11 rounded-full px-4 text-sm lower-third whitespace-nowrap transition ${
                     active ? "chip-active" : "chip-idle hover:text-foreground"
                   }`}
+
                 >
                   {g}
                 </button>
