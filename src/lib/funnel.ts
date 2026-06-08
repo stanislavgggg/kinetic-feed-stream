@@ -4,6 +4,37 @@ import { getUid, openTelegramLink, haptic } from "./telegram";
 
 const BASE = BRAND.apiBase;
 
+const EMPTY_CONFIG: AppConfig = {
+  brand: BRAND.name,
+  display_name: BRAND.name,
+  mode: "channel",
+  cta: {
+    label: {},
+    url: "",
+    channel: BRAND.channelHandleFallback,
+    channel_url: "",
+    gate: false,
+    bot_username: BRAND.botUsernameFallback,
+    partner_name: "",
+  },
+};
+
+const EMPTY_MEMBERSHIP: MembershipResponse = {
+  uid: null,
+  member: false,
+  gate: { enabled: false, locked: false, is_member: false, channel: BRAND.channelHandleFallback },
+  channel: BRAND.channelHandleFallback,
+  configured: false,
+};
+
+const EMPTY_NEWS: NewsResponse = {
+  items: [],
+  market: { coins: [], fng: null, mcap_change_24h: null, btc_dominance: null },
+  updated_at: "",
+};
+
+const EMPTY_LIVE: { matches: BackendMatch[] } = { matches: [] };
+
 export type NewsCategory = "all" | "crypto" | "casino" | "esports";
 
 export interface NewsItem {
