@@ -113,11 +113,12 @@ function MatchCard({ m, delay, cta, liveLabel, onTap }: { m: BackendMatch; delay
         <div className={`text-right truncate ${leading === 1 ? "text-foreground" : "text-muted-foreground"}`}>
           <div className="display text-xl uppercase truncate">{m.team1}</div>
         </div>
-        <div className="display tabular-nums text-[34px] mono inline-flex items-baseline gap-1 leading-none">
+        <div className="display tabular-nums mono inline-flex items-baseline gap-1 leading-none" style={{ fontSize: "clamp(30px, 9vw, 38px)" }}>
           <span className={leading === 1 ? "signal-text" : ""}>{s1}</span>
           <span className="text-muted-foreground/60 text-2xl">:</span>
           <span className={leading === 2 ? "signal-text" : ""}>{s2}</span>
         </div>
+
         <div className={`text-left truncate ${leading === 2 ? "text-foreground" : "text-muted-foreground"}`}>
           <div className="display text-xl uppercase truncate">{m.team2}</div>
         </div>
