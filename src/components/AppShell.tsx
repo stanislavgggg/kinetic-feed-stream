@@ -8,9 +8,13 @@ import { Header } from "./Header";
 import { haptic } from "@/lib/telegram";
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { onboarded, t } = useApp();
+  const { onboarded, t, clientReady } = useApp();
   const path = useRouterState({ select: (s) => s.location.pathname });
   const isPrivacy = path.startsWith("/privacy");
+
+  if (!clientReady) {
+    return <div className="min-h-[100dvh] bg-background" />;
+  }
 
   if (!onboarded && !isPrivacy) return <Onboarding />;
 
