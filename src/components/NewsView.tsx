@@ -35,6 +35,8 @@ export function NewsView() {
   const { t, lang, config, gateLocked } = useApp();
   const [cat, setCat] = useState<NewsCategory>("all");
   const [lockViewed, setLockViewed] = useState(false);
+  const [lockVisible, setLockVisible] = useState(false);
+  const lockSentinelRef = useRef<HTMLDivElement>(null);
 
   const q = useQuery({
     queryKey: ["news", cat],
