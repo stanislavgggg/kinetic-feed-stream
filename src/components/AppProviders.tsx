@@ -32,17 +32,17 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Inject Telegram WebApp script after hydration so its <html> style
-    // mutation can't race React's hydration pass.
+    const href = window.location.href;
+    const likelyTelegram = /tgWebApp/i.test(href) || /Telegram/i.test(navigator.userAgent);
     const SRC = "https://telegram.org/js/telegram-web-app.js";
-    if (!document.querySelector(`script[src="${SRC}"]`)) {
+    if ((window as any).Telegram?.WebApp) {
+      ready();
+    } else if (likelyTelegram && !document.querySelector(`script[src="${SRC}"]`)) {
       const s = document.createElement("script");
       s.src = SRC;
       s.async = true;
       s.onload = () => { try { ready(); } catch {} };
       document.head.appendChild(s);
-    } else {
-      ready();
     }
     setLangState(detectLang());
     try { setOnboardedState(localStorage.getItem(ONB_KEY) === "1"); } catch {}
