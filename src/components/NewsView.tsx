@@ -72,9 +72,10 @@ export function NewsView() {
               <button
                 key={c.key}
                 onClick={() => { haptic("selection"); setCat(c.key); }}
-                className={`press-btn h-9 rounded-full px-4 text-sm lower-third whitespace-nowrap transition ${
+                className={`press-btn h-11 rounded-full px-4 text-sm lower-third whitespace-nowrap transition ${
                   active ? "chip-active" : "chip-idle hover:text-foreground"
                 }`}
+
               >
                 {c.label(lang, t)}
               </button>
