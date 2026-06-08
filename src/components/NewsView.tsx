@@ -53,6 +53,17 @@ export function NewsView() {
     }
   }, [gateLocked, q.data, lockViewed]);
 
+  useEffect(() => {
+    const el = lockSentinelRef.current;
+    if (!el) { setLockVisible(false); return; }
+    const io = new IntersectionObserver(
+      ([entry]) => setLockVisible(entry.isIntersecting),
+      { rootMargin: "0px 0px -20% 0px", threshold: 0.01 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [gateLocked, q.data]);
+
   const items = q.data?.items ?? [];
   const market = q.data?.market;
   const updated = q.data?.updated_at;
