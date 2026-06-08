@@ -70,7 +70,6 @@ const dict: Record<Lang, Dict> = {
     channelPost3Title: "Casino signal log",
     channelPost3Sub: "Drops, RTP shifts, fresh promos",
   },
-  },
   ru: {
     news: "Новости",
     live: "Лайв",
