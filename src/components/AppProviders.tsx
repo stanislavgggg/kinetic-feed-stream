@@ -12,6 +12,7 @@ interface AppCtx {
   membership: MembershipResponse | null;
   refetchMembership: () => void;
   gateLocked: boolean; // gate enabled AND not a member
+  clientReady: boolean;
   onboarded: boolean;
   setOnboarded: (b: boolean) => void;
 }
@@ -98,7 +99,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
   const value = useMemo<AppCtx>(() => ({
     lang, t, setLang, config, membership,
     refetchMembership: () => { memQ.refetch(); },
-    gateLocked, onboarded, setOnboarded,
+    gateLocked, clientReady: mounted, onboarded, setOnboarded,
   }), [lang, t, setLang, config, membership, memQ, gateLocked, onboarded, setOnboarded]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
