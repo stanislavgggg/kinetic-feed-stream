@@ -2,6 +2,8 @@ import { useApp } from "./AppProviders";
 import { LangSwitcher } from "./LangSwitcher";
 import { BRAND } from "@/lib/brand";
 import { haptic } from "@/lib/telegram";
+import { openChannelFlow, api } from "@/lib/funnel";
+import { Send } from "lucide-react";
 
 export function Onboarding() {
   const { t, setOnboarded } = useApp();
