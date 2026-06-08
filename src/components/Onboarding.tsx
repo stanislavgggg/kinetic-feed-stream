@@ -6,7 +6,11 @@ import { haptic } from "@/lib/telegram";
 export function Onboarding() {
   const { t, setOnboarded } = useApp();
   return (
-    <div className="relative min-h-[100dvh] wrap flex flex-col overflow-hidden">
+    <div
+      className="relative min-h-[100svh] wrap flex flex-col overflow-hidden"
+      style={{ paddingTop: "var(--safe-top)", paddingBottom: "var(--safe-bottom)" }}
+    >
+
       {/* Aurora background — cool obsidian + warm signal */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-40 -left-32 h-[460px] w-[460px] rounded-full bg-signal/25 blur-3xl glow-pulse" />
