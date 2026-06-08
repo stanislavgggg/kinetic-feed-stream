@@ -24,9 +24,12 @@ export function Header() {
   const ss = now.getSeconds().toString().padStart(2, "0");
 
   return (
-    <header className="sticky top-0 z-30 -mx-4 px-4 glass">
-      <div className="wrap flex items-center justify-between gap-3 py-2.5">
-        <Link to="/" className="flex items-center gap-2.5">
+    <header
+      className="sticky top-0 z-30 -mx-4 px-4 glass"
+      style={{ paddingTop: "var(--safe-top)" }}
+    >
+      <div className="wrap flex items-center justify-between gap-3 py-2">
+        <Link to="/" className="flex items-center gap-2.5 min-h-[40px]">
           <span className="relative inline-grid place-items-center">
             <span className="absolute inset-0 -m-1.5 rounded-full bg-signal/40 blur-md glow-pulse" />
             <span className="relative inline-block h-2.5 w-2.5 rounded-full bg-signal shadow-[0_0_10px_var(--color-signal-glow)]" />
@@ -42,9 +45,9 @@ export function Header() {
           </div>
           <LangSwitcher />
           {user?.photo_url ? (
-            <img src={user.photo_url} alt="" className="h-8 w-8 rounded-full border border-border object-cover" />
+            <img src={user.photo_url} alt="" className="h-9 w-9 rounded-full border border-border object-cover" />
           ) : (
-            <div className="grid h-8 w-8 place-items-center rounded-full border border-border bg-card text-xs font-semibold">
+            <div className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card text-xs font-semibold">
               {initial}
             </div>
           )}
@@ -55,6 +58,7 @@ export function Header() {
     </header>
   );
 }
+
 
 function BreakingStrap({ label, tagline, hhmm, ss }: { label: string; tagline: string; hhmm: string; ss: string }) {
   return (

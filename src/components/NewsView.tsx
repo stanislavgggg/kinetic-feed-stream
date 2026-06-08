@@ -72,9 +72,10 @@ export function NewsView() {
               <button
                 key={c.key}
                 onClick={() => { haptic("selection"); setCat(c.key); }}
-                className={`press-btn h-9 rounded-full px-4 text-sm lower-third whitespace-nowrap transition ${
+                className={`press-btn h-11 rounded-full px-4 text-sm lower-third whitespace-nowrap transition ${
                   active ? "chip-active" : "chip-idle hover:text-foreground"
                 }`}
+
               >
                 {c.label(lang, t)}
               </button>
@@ -178,7 +179,7 @@ function HeroCard({ item, lang }: { item: NewsItem; lang: Lang }) {
         </div>
       )}
       <div className="relative -mt-12 p-4">
-        <h2 className="display text-[26px] leading-[1.02] uppercase">
+        <h2 className="display leading-[1.02] uppercase" style={{ fontSize: "clamp(22px, 6.4vw, 28px)" }}>
           <span className="headline-gradient">{item.title}</span>
         </h2>
         {item.summary && (
@@ -329,10 +330,11 @@ function LockedStack({
           </div>
           <h3 className="display text-2xl uppercase headline-gradient">{t.fullReadsInChannel}</h3>
           <p className="text-sm text-muted-foreground">{t.stickySub}</p>
-          <span className="press-btn signal-sweep relative overflow-hidden mt-2 mb-6 inline-flex h-12 items-center rounded-lg btn-signal px-5 lower-third">
+          <span className="press-btn signal-sweep relative overflow-hidden mt-2 mb-6 inline-flex btn-premium px-6">
             {t.subscribe}
           </span>
         </button>
+
       </div>
     </div>
   );
@@ -340,12 +342,15 @@ function LockedStack({
 
 function StickyCTA({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <div className="fixed inset-x-0 bottom-[68px] z-30 pointer-events-none pb-[env(safe-area-inset-bottom)]">
+    <div
+      className="fixed inset-x-0 z-30 pointer-events-none"
+      style={{ bottom: "calc(72px + var(--safe-bottom))" }}
+    >
       <div className="wrap pointer-events-none">
         <div className="pointer-events-auto mb-2 rounded-2xl glass p-2 shadow-2xl">
           <button
             onClick={onClick}
-            className="press-btn signal-sweep relative overflow-hidden h-12 w-full rounded-lg btn-signal lower-third"
+            className="press-btn signal-sweep relative overflow-hidden w-full btn-premium"
           >
             {label}
           </button>
@@ -354,6 +359,7 @@ function StickyCTA({ label, onClick }: { label: string; onClick: () => void }) {
     </div>
   );
 }
+
 
 function EmptyState({ text }: { text: string }) {
   return (
