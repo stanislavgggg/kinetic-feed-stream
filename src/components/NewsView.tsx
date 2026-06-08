@@ -123,15 +123,17 @@ export function NewsView() {
         ))}
 
         {showLock && (
-          <LockedStack
-            items={lockedItems}
-            onTap={() => openChannelFlow(config, "feed_lock")}
-            t={t}
-          />
+          <div ref={lockSentinelRef}>
+            <LockedStack
+              items={lockedItems}
+              onTap={() => openChannelFlow(config, "feed_lock")}
+              t={t}
+            />
+          </div>
         )}
       </div>
 
-      {gateLocked && (
+      {gateLocked && showLock && lockVisible && (
         <StickyCTA
           label={t.subscribe}
           onClick={() => openChannelFlow(config, "feed_lock_sticky")}
