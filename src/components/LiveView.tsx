@@ -130,10 +130,11 @@ function MatchCard({ m, delay, cta, liveLabel, onTap }: { m: BackendMatch; delay
 
       <button
         onClick={onTap}
-        className="press-btn signal-sweep relative mt-4 h-11 w-full overflow-hidden rounded-lg btn-signal lower-third"
+        className="press-btn signal-sweep relative mt-4 w-full overflow-hidden btn-premium"
       >
         {cta}
       </button>
+
     </div>
   );
 }
