@@ -109,21 +109,25 @@ export interface MembershipResponse {
 }
 
 async function getJSON<T>(path: string, signal?: AbortSignal): Promise<T> {
+  if (!BASE) {
+    throw new Error("VITE_API_BASE is not configured");
+  }
   const res = await fetch(`${BASE}${path}`, { signal, headers: { accept: "application/json" } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return (await res.json()) as T;
 }
 
 export const api = {
-  config: (signal?: AbortSignal) => getJSON<AppConfig>("/api/config", signal),
+  config: (signal?: AbortSignal) => BASE ? getJSON<AppConfig>("/api/config", signal) : Promise.resolve(EMPTY_CONFIG),
   news: (category: NewsCategory, signal?: AbortSignal) =>
-    getJSON<NewsResponse>(`/api/news?category=${category}&limit=40`, signal),
-  live: (signal?: AbortSignal) => getJSON<{ matches: BackendMatch[] }>("/api/live", signal),
+    BASE ? getJSON<NewsResponse>(`/api/news?category=${category}&limit=40`, signal) : Promise.resolve(EMPTY_NEWS),
+  live: (signal?: AbortSignal) => BASE ? getJSON<{ matches: BackendMatch[] }>("/api/live", signal) : Promise.resolve(EMPTY_LIVE),
   upcoming: (signal?: AbortSignal) =>
-    getJSON<{ matches: BackendMatch[] }>("/api/upcoming", signal),
+    BASE ? getJSON<{ matches: BackendMatch[] }>("/api/upcoming", signal) : Promise.resolve(EMPTY_LIVE),
   membership: (uid: number | null, signal?: AbortSignal) =>
-    getJSON<MembershipResponse>(`/api/membership${uid != null ? `?uid=${uid}` : ""}`, signal),
+    BASE ? getJSON<MembershipResponse>(`/api/membership${uid != null ? `?uid=${uid}` : ""}`, signal) : Promise.resolve({ ...EMPTY_MEMBERSHIP, uid }),
   event: (event: "cta_view" | "cta_tap" | "channel_open", meta?: Record<string, unknown>) => {
+    if (!BASE) return;
     try {
       const body = JSON.stringify({ event, uid: getUid() ?? undefined, meta });
       fetch(`${BASE}/api/event`, {
