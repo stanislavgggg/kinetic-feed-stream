@@ -330,10 +330,11 @@ function LockedStack({
           </div>
           <h3 className="display text-2xl uppercase headline-gradient">{t.fullReadsInChannel}</h3>
           <p className="text-sm text-muted-foreground">{t.stickySub}</p>
-          <span className="press-btn signal-sweep relative overflow-hidden mt-2 mb-6 inline-flex h-12 items-center rounded-lg btn-signal px-5 lower-third">
+          <span className="press-btn signal-sweep relative overflow-hidden mt-2 mb-6 inline-flex btn-premium px-6">
             {t.subscribe}
           </span>
         </button>
+
       </div>
     </div>
   );
