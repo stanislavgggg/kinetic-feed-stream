@@ -342,12 +342,15 @@ function LockedStack({
 
 function StickyCTA({ label, onClick }: { label: string; onClick: () => void }) {
   return (
-    <div className="fixed inset-x-0 bottom-[68px] z-30 pointer-events-none pb-[env(safe-area-inset-bottom)]">
+    <div
+      className="fixed inset-x-0 z-30 pointer-events-none"
+      style={{ bottom: "calc(72px + var(--safe-bottom))" }}
+    >
       <div className="wrap pointer-events-none">
         <div className="pointer-events-auto mb-2 rounded-2xl glass p-2 shadow-2xl">
           <button
             onClick={onClick}
-            className="press-btn signal-sweep relative overflow-hidden h-12 w-full rounded-lg btn-signal lower-third"
+            className="press-btn signal-sweep relative overflow-hidden w-full btn-premium"
           >
             {label}
           </button>
@@ -356,6 +359,7 @@ function StickyCTA({ label, onClick }: { label: string; onClick: () => void }) {
     </div>
   );
 }
+
 
 function EmptyState({ text }: { text: string }) {
   return (
