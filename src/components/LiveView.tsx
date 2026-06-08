@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Radio, Send, ArrowUpRight } from "lucide-react";
 import { api, openChannelFlow, type BackendMatch } from "@/lib/funnel";
 import { useApp } from "./AppProviders";
 import { haptic } from "@/lib/telegram";
@@ -24,7 +25,7 @@ export function LiveView() {
   const filtered = game === "ALL" ? matches : matches.filter((m) => m.game?.toUpperCase() === game);
 
   return (
-    <div className="pb-10">
+    <div className="pb-28">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="live-dot" />
@@ -57,7 +58,13 @@ export function LiveView() {
         </div>
       )}
 
-      <div className="flex flex-col gap-3">
+      <PinnedChannelCard
+        title={t.livePinnedTitle}
+        sub={t.livePinnedSub}
+        onTap={() => openChannelFlow(config, "live_pinned")}
+      />
+
+      <div className="mt-3 flex flex-col gap-3">
         {q.isLoading && Array.from({ length: 4 }).map((_, i) => <Skel key={i} />)}
         {!q.isLoading && filtered.length === 0 && (
           <div className="surface-card rounded-2xl p-10 text-center">
@@ -72,12 +79,17 @@ export function LiveView() {
             key={String(m.id ?? `${m.team1}-${m.team2}-${i}`)}
             m={m}
             delay={i * 50}
-            cta={t.watchInChannel}
             liveLabel={t.liveDot}
-            onTap={() => openChannelFlow(config, "live_match")}
           />
         ))}
       </div>
+
+      {filtered.length > 0 && (
+        <LiveStickyCTA
+          label={t.liveStickyCta}
+          onClick={() => openChannelFlow(config, "live_sticky")}
+        />
+      )}
     </div>
   );
 }
@@ -86,7 +98,49 @@ function Skel() {
   return <div className="h-32 animate-pulse rounded-2xl surface-card" />;
 }
 
-function MatchCard({ m, delay, cta, liveLabel, onTap }: { m: BackendMatch; delay: number; cta: string; liveLabel: string; onTap: () => void }) {
+function PinnedChannelCard({ title, sub, onTap }: { title: string; sub: string; onTap: () => void }) {
+  return (
+    <button
+      onClick={onTap}
+      className="press-btn card-in edge-glow relative w-full overflow-hidden rounded-2xl surface-elevated p-4 text-left"
+    >
+      <div aria-hidden className="pointer-events-none absolute -top-12 -right-10 h-36 w-36 rounded-full bg-signal/20 blur-3xl" />
+      <div className="relative flex items-center gap-3">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl btn-signal-soft text-signal">
+          <Radio size={20} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="display text-[15px] uppercase leading-tight truncate">{title}</div>
+          <div className="mt-0.5 text-[12px] text-muted-foreground line-clamp-1">{sub}</div>
+        </div>
+        <ArrowUpRight size={18} className="text-signal shrink-0" />
+      </div>
+    </button>
+  );
+}
+
+function LiveStickyCTA({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <div
+      className="fixed inset-x-0 z-30 pointer-events-none"
+      style={{ bottom: "calc(72px + var(--safe-bottom))" }}
+    >
+      <div className="wrap pointer-events-none">
+        <div className="pointer-events-auto mb-2 rounded-2xl glass p-2 shadow-2xl">
+          <button
+            onClick={onClick}
+            className="press-btn signal-sweep relative overflow-hidden w-full btn-premium inline-flex items-center justify-center gap-2"
+          >
+            <Send size={18} />
+            {label}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MatchCard({ m, delay, liveLabel }: { m: BackendMatch; delay: number; liveLabel: string }) {
   const s1 = m.score1 ?? 0;
   const s2 = m.score2 ?? 0;
   const leading = s1 === s2 ? 0 : s1 > s2 ? 1 : 2;
@@ -127,13 +181,6 @@ function MatchCard({ m, delay, cta, liveLabel, onTap }: { m: BackendMatch; delay
       {m.format && (
         <div className="relative mt-2 text-center lower-third text-muted-foreground mono">{m.format}</div>
       )}
-
-      <button
-        onClick={onTap}
-        className="press-btn signal-sweep relative overflow-hidden mt-4 w-full btn-premium"
-      >
-        {cta}
-      </button>
     </div>
   );
 }
