@@ -34,7 +34,7 @@ export function Header() {
             <span className="absolute inset-0 -m-1.5 rounded-full bg-signal/40 blur-md glow-pulse" />
             <span className="relative inline-block h-2.5 w-2.5 rounded-full bg-signal shadow-[0_0_10px_var(--color-signal-glow)]" />
           </span>
-          <span className="display text-[22px] font-extrabold tracking-tight uppercase headline-gradient">
+          <span className="display text-[18px] font-extrabold tracking-tight uppercase headline-gradient whitespace-nowrap">
             {name}
           </span>
         </Link>
@@ -54,7 +54,7 @@ export function Header() {
         </div>
       </div>
       <BreakingStrap label={t.liveDot} tagline={BRAND.tagline.en} hhmm={hhmm} ss={ss} />
-      <div className="hr-gradient -mx-4" />
+      <div className="hr-gradient" />
     </header>
   );
 }
@@ -62,8 +62,8 @@ export function Header() {
 
 function BreakingStrap({ label, tagline, hhmm, ss }: { label: string; tagline: string; hhmm: string; ss: string }) {
   return (
-    <div className="relative -mx-4 overflow-hidden">
-      <div className="flex items-stretch text-[11px]">
+    <div className="relative overflow-hidden">
+      <div className="flex items-stretch text-[11px] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
         <div className="tape-stripe text-signal-foreground px-3 py-1 lower-third inline-flex items-center gap-1.5">
           <span className="live-dot bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
           {label} · BREAKING
