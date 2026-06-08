@@ -62,16 +62,22 @@ export function Header() {
 
 function BreakingStrap({ label, tagline, hhmm, ss }: { label: string; tagline: string; hhmm: string; ss: string }) {
   return (
-    <div className="relative overflow-hidden">
-      <div className="flex items-stretch text-[11px] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
-        <div className="tape-stripe text-signal-foreground px-3 py-1 lower-third inline-flex items-center gap-1.5">
-          <span className="live-dot bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-          {label} · BREAKING
+    <div className="relative -mx-4 overflow-hidden">
+      <div
+        className="flex items-stretch text-[11px] min-w-0"
+        style={{
+          paddingLeft: "max(env(safe-area-inset-left), 1rem)",
+          paddingRight: "max(env(safe-area-inset-right), 1rem)",
+        }}
+      >
+        <div className="tape-stripe text-signal-foreground px-2.5 py-1 lower-third inline-flex items-center gap-1.5 shrink-0 max-w-[55%]">
+          <span className="live-dot bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] shrink-0" />
+          <span className="truncate">{label} · BREAKING</span>
         </div>
-        <div className="flex-1 px-3 py-1 flex items-center justify-between bg-[color-mix(in_oklab,var(--surface-1)_70%,transparent)] backdrop-blur">
-          <span className="text-muted-foreground lower-third truncate">{tagline}</span>
-          <span className="mono text-muted-foreground tabular-nums sm:hidden">{hhmm}<span className="opacity-50">:{ss}</span></span>
-          <span className="mono text-muted-foreground hidden sm:inline">wire-room · v1</span>
+        <div className="flex-1 min-w-0 px-2.5 py-1 flex items-center justify-between gap-2 bg-[color-mix(in_oklab,var(--surface-1)_70%,transparent)] backdrop-blur">
+          <span className="text-muted-foreground lower-third truncate min-w-0">{tagline}</span>
+          <span className="mono text-muted-foreground tabular-nums shrink-0 sm:hidden">{hhmm}<span className="opacity-50">:{ss}</span></span>
+          <span className="mono text-muted-foreground hidden sm:inline shrink-0">wire-room · v1</span>
         </div>
       </div>
     </div>
