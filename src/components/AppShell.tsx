@@ -19,14 +19,14 @@ export function AppShell({ children }: { children: ReactNode }) {
   if (!onboarded && !isPrivacy) return <Onboarding />;
 
   return (
-    <div className="relative min-h-[100dvh] pb-[calc(76px+env(safe-area-inset-bottom))]">
+    <div className="relative min-h-[100svh] pb-[calc(76px+var(--safe-bottom))]">
       <Header />
       <Ticker />
       <main className="wrap pt-3">{children}</main>
       {/* fade behind nav */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-30 h-24"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-30 h-32"
         style={{
           background:
             "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--background) 70%, transparent) 35%, var(--background) 90%)",
@@ -36,6 +36,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
 
 function BottomNav({ newsLabel, liveLabel, path }: { newsLabel: string; liveLabel: string; path: string }) {
   const items = [
