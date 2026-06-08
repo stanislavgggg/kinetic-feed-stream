@@ -2,7 +2,18 @@ export type Lang = "en" | "ru" | "es";
 
 const LS_KEY = "mp_lang";
 
-const dict = {
+export interface Dict {
+  news: string; live: string; all: string; crypto: string; casino: string; esports: string;
+  updated: string; justNow: string;
+  minAgo: (n: number) => string; hourAgo: (n: number) => string; dayAgo: (n: number) => string;
+  emptyNews: string; emptyLive: string; signalLost: string; upcoming: string; liveDot: string;
+  fullReadsInChannel: string; stickySub: string; subscribe: string; openChannel: string;
+  watchInChannel: string; onboardTitle: string; onboardBody: string; onboardCta: string;
+  privacy: string; disclaimer: string; language: string; fng: string; market: string;
+  refreshing: string; feedLockHeader: string;
+}
+
+const dict: Record<Lang, Dict> = {
   en: {
     news: "News",
     live: "Live",
