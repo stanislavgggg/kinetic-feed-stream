@@ -137,7 +137,7 @@ export function saveLang(lang: Lang) {
 }
 
 export function t(lang: Lang): Dict {
-  return dict[lang] ?? dict.en;
+  return (dict[lang] ?? dict.en) as Dict;
 }
 
 export function pickLocalized(
