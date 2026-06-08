@@ -44,7 +44,10 @@ function BottomNav({ newsLabel, liveLabel, path }: { newsLabel: string; liveLabe
     { to: "/live", label: liveLabel, icon: Radio, active: path.startsWith("/live") },
   ] as const;
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 glass pb-[env(safe-area-inset-bottom)]">
+    <nav
+      className="fixed inset-x-0 bottom-0 z-40 glass"
+      style={{ paddingBottom: "max(var(--safe-bottom), 8px)" }}
+    >
       <div className="hr-gradient absolute inset-x-0 top-0" />
       <div className="wrap grid grid-cols-2">
         {items.map(({ to, label, icon: Icon, active }) => (
@@ -52,16 +55,16 @@ function BottomNav({ newsLabel, liveLabel, path }: { newsLabel: string; liveLabe
             key={to}
             to={to}
             onClick={() => haptic("selection")}
-            className={`press-btn flex h-[68px] flex-col items-center justify-center gap-1 ${active ? "text-foreground" : "text-muted-foreground hover:text-foreground/90"}`}
+            className={`press-btn flex h-[60px] min-h-[48px] flex-col items-center justify-center gap-1 ${active ? "text-foreground" : "text-muted-foreground hover:text-foreground/90"}`}
           >
             <span className="relative">
               {active && (
                 <span
-                  className="absolute -top-3 left-1/2 h-[3px] w-9 -translate-x-1/2 rounded-full"
+                  className="absolute -top-2.5 left-1/2 h-[3px] w-9 -translate-x-1/2 rounded-full"
                   style={{ background: "var(--gradient-signal)", boxShadow: "0 0 12px color-mix(in oklab, var(--signal) 60%, transparent)" }}
                 />
               )}
-              <Icon size={22} strokeWidth={active ? 2.2 : 1.6} />
+              <Icon size={24} strokeWidth={active ? 2.2 : 1.6} />
             </span>
             <span className="lower-third">{label}</span>
           </Link>
@@ -70,3 +73,4 @@ function BottomNav({ newsLabel, liveLabel, path }: { newsLabel: string; liveLabe
     </nav>
   );
 }
+
