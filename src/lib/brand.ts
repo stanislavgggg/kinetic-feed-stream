@@ -1,7 +1,7 @@
 // Brand-specific config. Swap values here to rebrand.
 export const BRAND = {
-  name: "PULSE",
-  wordmark: "PULSE",
+  name: "Kinetic Feed",
+  wordmark: "KINETIC FEED",
   tagline: { en: "Live wire", ru: "Прямой эфир", es: "En vivo" },
   // Build-time fallbacks; runtime /api/config overrides these.
   channelHandleFallback: (import.meta.env.VITE_CHANNEL_HANDLE as string) || "",
