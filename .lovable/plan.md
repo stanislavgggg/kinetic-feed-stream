@@ -1,94 +1,109 @@
+# План: адаптация под iPhone 16 / 16 Pro / 17 (390–402pt, Dynamic Island, home-indicator) + премиум-кнопки
 
-## What's wrong now
+Цель: убрать обрезание контента под Dynamic Island и home-indicator, увеличить все тап-таргеты ≥44pt, сделать кнопки визуально премиальными (gradient + glow + press feedback), без правки бэкенда, API и логики воронки.
 
-- Background is a flat, muddy near-black with weak radial washes — reads as "dark mode default", not premium.
-- Vermilion CTA sits on warm-brown canvas → low contrast, buttons feel dim and dusty.
-- Empty state, footer band, and bottom-nav blend into the same brown — no depth, no hierarchy.
-- Glass header is barely distinguishable from body; "BREAKING" tape looks like a sticker on cardboard.
+## 1. Safe-area везде (src/styles.css + AppShell + Header + Onboarding)
 
-## Direction: "Obsidian Wire"
+- `src/styles.css` → `html, body` добавить:
+  - `min-height: 100svh` (вместо/в дополнение к `100dvh` — корректно с Safari 17 на iPhone).
+  - Глобальные CSS-переменные `--safe-top`, `--safe-bottom`, `--safe-left`, `--safe-right` через `env(safe-area-inset-*)` с фолбэком `0px`.
+  - `@viewport`/мета: убедиться, что в `src/routes/__root.tsx` `<meta name="viewport">` содержит `viewport-fit=cover` (если отсутствует — добавить).
+- `AppShell.tsx`:
+  - Контейнер: `min-h-[100svh]`, `pb-[calc(80px+var(--safe-bottom))]`.
+  - Фейд за nav: высота 120px (был 96px) — чтобы под home-indicator не было резкой обрезки.
+- `Header.tsx`:
+  - Sticky-header: `pt-[var(--safe-top)]`, фон растягивается под Dynamic Island.
+  - `BreakingStrap` сохраняет высоту, но не уезжает под notch.
+- `Onboarding.tsx`:
+  - Контейнер: `pt-[var(--safe-top)] pb-[var(--safe-bottom)]`, кнопка CTA — `mb-[calc(24px+var(--safe-bottom))]`.
 
-A cool obsidian/graphite canvas with a single warm signal accent and refined metallic gradients. Think Bloomberg Terminal × Linear × Apple Sports — newsroom seriousness, premium polish.
+## 2. BottomNav (AppShell.tsx) — удобный под iPhone
 
-**Palette (all OKLCH, dark-first):**
-- Canvas: deep obsidian `oklch(0.11 0.012 250)` with subtle blue undertone (not brown)
-- Surface 1 (cards): `oklch(0.16 0.014 250)`
-- Surface 2 (elevated): `oklch(0.19 0.016 250)`
-- Border: `oklch(0.26 0.014 250)` + hairline `white/6`
-- Foreground: near-white `oklch(0.98 0.003 250)`
-- Muted: `oklch(0.66 0.015 250)`
-- **Signal (single accent)**: vermilion→amber gradient `oklch(0.70 0.22 28) → oklch(0.80 0.18 55)`
-- Ember glow: `oklch(0.78 0.20 38)`
-- Up/Down: emerald `oklch(0.78 0.16 155)` / coral `oklch(0.70 0.22 25)`
-- Category accents kept but desaturated 15% so signal stays dominant.
+- Высота элементов: с `h-[68px]` → `h-[60px]` + явный `min-h-[48px]` для каждой ссылки = тап-таргет ≥48pt с учётом env-padding.
+- Padding-bottom = `env(safe-area-inset-bottom)` (уже есть), но переключить на `max(env(safe-area-inset-bottom), 8px)`.
+- Иконки 24px, подписи `text-[11px]`, активный индикатор — gradient bar 36×3 (как сейчас) + лёгкое свечение.
 
-**Background system (layered, not flat):**
-1. Base obsidian canvas
-2. Top-left aurora: signal @ 18% blur 140px
-3. Top-right aurora: ember @ 14% blur 160px
-4. Subtle vertical noise grain (existing SVG, opacity 0.06)
-5. Faint top vignette `linear-gradient(180deg, white/3, transparent 30%)` for "lit from above" feel
-6. Bottom fade into pure obsidian behind the nav
+## 3. Премиум-кнопки (новая утилита `@utility btn-premium` в src/styles.css)
 
-**Gradient tokens (reusable):**
-- `--gradient-signal`: `linear-gradient(135deg, signal, ember)`
-- `--gradient-surface`: `linear-gradient(180deg, surface-2, surface-1)` (card top-light)
-- `--gradient-text-headline`: `linear-gradient(180deg, foreground 0%, foreground/70 100%)`
-- `--gradient-border-premium`: conic-ish edge using `signal/40 → transparent → ember/30`
-- `--shadow-premium`: layered `0 1px 0 white/6 inset, 0 20px 50px -20px black/60, 0 0 30px -10px signal/25`
+Единый стиль для всех CTA: Onboarding CTA, StickyCTA, LockedStack CTA, MatchCard CTA.
 
-## Concrete changes
+- Базовая высота: `--btn-h: 52px` (≥44pt + комфорт).
+- Слои:
+  - Background: `var(--gradient-signal)` (signal→ember).
+  - Внутренний highlight: `inset 0 1px 0 rgba(255,255,255,.35)` + `inset 0 -1px 0 rgba(0,0,0,.25)`.
+  - Внешний glow: `0 10px 28px -8px color-mix(in oklab, var(--signal) 55%, transparent), 0 24px 60px -24px color-mix(in oklab, var(--ember) 45%, transparent)`.
+  - Ободок: `1px solid color-mix(in oklab, var(--ember) 45%, transparent)`.
+  - Радиус: `14px` (rounded-2xl-ish, более «таблеточно»).
+  - Текст: `lower-third`, `tracking-[0.14em]`, `font-weight: 800`, `color: var(--signal-foreground)`, мягкая тень `0 1px 0 rgba(0,0,0,.25)`.
+- Состояния:
+  - `:hover` (десктоп) — `filter: brightness(1.06) saturate(1.05)`.
+  - `:active` — `transform: scale(0.975)`, `filter: brightness(1.1)`, `transition: 120ms`.
+  - `:focus-visible` — двойной ring (`outline: 2px solid var(--ember); outline-offset: 3px`) для доступности.
+  - `:disabled` — `opacity: .5`, `filter: grayscale(.4)`, `pointer-events: none`.
+- Sweep-блик уже есть (`.signal-sweep`) — переиспользуется.
+- Новая вторичная утилита `@utility btn-ghost-premium`: прозрачный градиент-бордер + glass-фон для второстепенных действий (язык, фильтры — опционально).
 
-### 1. `src/styles.css` — token + utility overhaul
-- Replace warm-brown `--background`/card/border tokens with cool obsidian set above.
-- Add `--gradient-signal`, `--gradient-surface`, `--gradient-text-headline`, `--shadow-premium`, `--shadow-card`.
-- Rework `body` background: 2 auroras + top vignette + grain. Tune blur sizes so the canvas reads premium at mobile width.
-- Rewrite `@utility glass` to use a real `linear-gradient` surface + `backdrop-blur` (no hand-written `-webkit-` prefix; per Tailwind v4 gotchas — let the build prefix).
-- Add `@utility surface-card`: gradient surface + premium shadow + 1px inner top-light border.
-- Add `@utility btn-signal`: gradient bg, inner highlight, layered shadow, glow on press.
-- Add `@utility chip-active` / `chip-idle` for filter pills with subtle gradient + inset highlight.
-- Update `.tape-stripe` to use the signal→ember gradient instead of repeating stripes (cleaner, less "construction tape").
-- Replace `.headline-gradient` with the new text gradient (white→white/65) so headlines feel chiseled, not orange-tinted.
+## 4. Chips / фильтры (NewsView + LiveView)
 
-### 2. `src/components/Header.tsx`
-- Header bg: `surface-card` glass with a 1px gradient bottom border instead of plain border.
-- BREAKING strap: gradient pill (signal→ember) with subtle inner shadow, not diagonal stripes; right side: thin hairline divider + mono timestamp moved here for "wire" feel.
-- Brand wordmark: keep headline gradient but switch to white→white/70 (no orange tint).
+- Высота `h-9` → `h-11` (44px), padding `px-4` → `px-4.5`, текст `text-sm` остаётся.
+- Активный `chip-active` сохраняем, но добавляем `shadow-signal/40` для контраста.
+- Контейнер фильтров: `gap-2` → `gap-2.5`, скролл с `scroll-px-4 snap-x snap-mandatory` (мягкий snap к чипам на узких экранах).
 
-### 3. `src/components/AppShell.tsx`
-- Bottom nav: switch to `glass` + top-edge gradient hairline; active indicator becomes the signal→ember gradient bar (currently solid).
-- Add bottom fade overlay above nav so content dissolves into the bar instead of hard-cutting.
+## 5. StickyCTA (NewsView.tsx)
 
-### 4. `src/components/NewsView.tsx`
-- Filter chips: active = `chip-active` (gradient surface + inset light); idle = `chip-idle` (no-fill, hairline border, muted text → hover foreground).
-- Hero card: full `surface-card` + edge-glow border using the new premium gradient; CTA arrow gets the signal gradient.
-- Standard news cards: left accent stripe becomes a 3px gradient (category color → transparent), card gets `surface-card` (subtle top-light).
-- Empty state: replace dashed border with a `surface-card` panel + tiny signal dot + smaller muted copy.
-- Locked stack: lock pill uses `btn-signal`; subscribe CTA replaced with `btn-signal` (gradient + premium shadow + sweep).
-- Sticky CTA: glass shell + `btn-signal` inside.
+- Поднять над nav: `bottom-[calc(72px+var(--safe-bottom))]` (сейчас захардкодено `bottom-[68px]` + раздельный env padding — на iPhone 17 наезжает на home-indicator).
+- Кнопка использует новую `btn-premium`, высота 52px.
+- Glass-обёртка: усилить blur до 24px, добавить hairline сверху.
 
-### 5. `src/components/LiveView.tsx`
-- Match card: `surface-card` + edge-glow; score numerals slightly larger, leader number gets gradient text (signal→ember) instead of flat orange.
-- Game-filter chips: same `chip-active`/`chip-idle` system as News.
-- Watch-in-channel CTA: `btn-signal`.
+## 6. HeroCard / NewsCard / MatchCard
 
-### 6. `src/components/Onboarding.tsx`
-- Recolor auroras to cool obsidian + warm signal (currently both warm → muddy).
-- Enter-the-wire CTA: `btn-signal` (gradient + premium shadow + signal-sweep).
-- Three category cards keep edge-glow but get `surface-card`.
+- HeroCard: заголовок `text-[26px]` → `clamp(22px, 6.4vw, 28px)` чтобы не ломалось на 390pt узких экранах.
+- NewsCard: `p-4` → `p-4` (ок), но `gap-3` между текстом и Thumb → `gap-3.5`, Thumb `h-20 w-20` → `h-[76px] w-[76px]` для пропорций.
+- MatchCard: score `text-[34px]` → `clamp(30px, 9vw, 38px)`; CTA высота `h-11` → `h-12` с `btn-premium`.
 
-### 7. `src/components/Ticker.tsx`
-- Replace `bg-card/60` band with `glass` + top/bottom 1px gradient hairlines so the ticker feels like a brass rail rather than a brown stripe.
+## 7. Header — компактнее под Dynamic Island
 
-## Out of scope (explicitly not changing)
+- `py-2.5` → `py-2` (после добавления safe-area-top появится «лишняя» высота — компенсируем).
+- Аватар `h-8 w-8` → `h-9 w-9` (удобнее тап).
+- LangSwitcher (отдельный файл, не правим логику) — задать `min-h-[40px]` через wrapper-класс.
 
-- API contract / data wiring / funnel events / Telegram script — untouched.
-- Routing, i18n strings, brand name, copy — untouched.
-- No new dependencies (no MagicUI, no shadcn additions for this pass).
+## Технические детали
 
-## Technical notes
+```text
+src/styles.css
+├── + :root { --safe-top: env(safe-area-inset-top, 0px); ... }
+├── + @utility btn-premium { ... }       (новая)
+├── + @utility btn-ghost-premium { ... } (новая, для вторичных)
+└── ~ html, body { min-height: 100svh; }
 
-- All new colors via `@theme` tokens in `src/styles.css`, consumed as Tailwind classes (`bg-signal`, `text-ember`, etc.) — no hardcoded hex in components.
-- Gradients exposed as CSS variables + `@utility` wrappers so components stay class-only.
-- Comply with Tailwind v4 gotchas: never hand-write `-webkit-backdrop-filter`; use `backdrop-blur-*` utilities; bare `border` always paired with explicit `border-color`.
-- Single visual pass; no behavior, no new state, no new routes.
+src/routes/__root.tsx
+└── ~ <meta name="viewport" content="... viewport-fit=cover">
+
+src/components/AppShell.tsx
+├── ~ контейнер: 100svh + pb с var(--safe-bottom)
+├── ~ фейд: 120px
+└── ~ BottomNav: h-[60px], min-h-[48px], max(env(...), 8px)
+
+src/components/Header.tsx
+└── ~ pt-[var(--safe-top)], py-2, аватар h-9 w-9
+
+src/components/Onboarding.tsx
+├── ~ pt/pb safe-area
+└── ~ CTA → btn-premium, h-14
+
+src/components/NewsView.tsx
+├── ~ chips h-11
+├── ~ StickyCTA bottom: calc(72px + var(--safe-bottom))
+├── ~ LockedStack CTA → btn-premium
+└── ~ HeroCard headline clamp()
+
+src/components/LiveView.tsx
+├── ~ chips h-11
+└── ~ MatchCard CTA → btn-premium, h-12; score clamp()
+```
+
+## Вне scope
+
+- API, воронка, аналитика, gating, переводы, Telegram SDK, роутинг, бренд/копия — не трогаем.
+- Цветовая палитра «Obsidian Wire» сохраняется (signal/ember), визуальные токены не меняются — только размеры, отступы, новые утилиты для кнопок.
+- Никаких новых зависимостей.
