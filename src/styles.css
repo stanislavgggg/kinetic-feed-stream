@@ -239,10 +239,6 @@
     0 24px 60px -24px color-mix(in oklab, var(--ember) 45%, transparent);
   isolation: isolate;
   transition: transform 120ms ease, filter 160ms ease, box-shadow 200ms ease;
-  &:hover { filter: brightness(1.06) saturate(1.05); }
-  &:active { transform: scale(0.975); filter: brightness(1.1); }
-  &:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
-  &:disabled { opacity: 0.5; filter: grayscale(0.4); pointer-events: none; }
 }
 
 @utility btn-ghost-premium {
@@ -267,8 +263,13 @@
     inset 0 1px 0 rgba(255,255,255,0.08),
     0 8px 24px -14px rgba(0,0,0,0.6);
   transition: transform 120ms ease, filter 160ms ease;
-  &:active { transform: scale(0.975); filter: brightness(1.08); }
 }
+
+.btn-premium:hover { filter: brightness(1.06) saturate(1.05); }
+.btn-premium:active { transform: scale(0.975); filter: brightness(1.1); }
+.btn-premium:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+.btn-premium:disabled { opacity: 0.5; filter: grayscale(0.4); pointer-events: none; }
+.btn-ghost-premium:active { transform: scale(0.975); filter: brightness(1.08); }
 
 
 @utility chip-active {
