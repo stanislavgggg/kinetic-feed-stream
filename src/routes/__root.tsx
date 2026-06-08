@@ -55,6 +55,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "PULSE — Live news. Live scores." },
       { property: "og:description", content: "An always-on press desk for crypto, casino and esports." },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "PULSE — Live news. Live scores." },
+      { name: "twitter:description", content: "An always-on press desk for crypto, casino and esports." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/02880582-39ea-4d53-b150-5980a1c4ec7a/id-preview-7fbdebf8--f8701ade-90ef-4c39-addf-d5302dfe7cb8.lovable.app-1780890914548.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/02880582-39ea-4d53-b150-5980a1c4ec7a/id-preview-7fbdebf8--f8701ade-90ef-4c39-addf-d5302dfe7cb8.lovable.app-1780890914548.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
