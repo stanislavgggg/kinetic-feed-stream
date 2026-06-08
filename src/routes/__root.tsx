@@ -65,9 +65,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700;800&family=Public+Sans:wght@400;500;600;700&display=swap",
       },
     ],
-    scripts: [
-      { src: "https://telegram.org/js/telegram-web-app.js", async: true },
-    ],
+    // Telegram script is injected client-side from AppProviders to avoid
+    // SSR hydration mismatch (the script mutates <html> style on load).
+
   }),
   shellComponent: RootShell,
   component: RootComponent,
