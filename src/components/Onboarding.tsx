@@ -75,10 +75,11 @@ export function Onboarding() {
 
       <button
         onClick={() => { haptic("medium"); setOnboarded(true); }}
-        className="press-btn signal-sweep relative overflow-hidden mb-6 h-14 w-full rounded-xl btn-signal display uppercase tracking-widest text-base"
+        className="press-btn signal-sweep relative overflow-hidden mb-6 w-full btn-premium text-base"
       >
         {t.onboardCta}
       </button>
+
 
       <p className="pb-6 text-center text-[11px] text-muted-foreground">{t.disclaimer}</p>
     </div>
