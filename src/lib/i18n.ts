@@ -116,9 +116,8 @@ const dict: Record<Lang, Dict> = {
     refreshing: "Actualizando",
     feedLockHeader: "Más en directo",
   },
-} as const;
+};
 
-export type Dict = typeof dict.en;
 
 export function detectLang(): Lang {
   if (typeof window === "undefined") return "en";
