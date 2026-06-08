@@ -6,7 +6,7 @@ import { openChannelFlow, api } from "@/lib/funnel";
 import { Send } from "lucide-react";
 
 export function Onboarding() {
-  const { t, setOnboarded } = useApp();
+  const { t, setOnboarded, config } = useApp();
   return (
     <div
       className="relative min-h-[100svh] wrap flex flex-col overflow-hidden"
