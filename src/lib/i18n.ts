@@ -11,6 +11,12 @@ export interface Dict {
   watchInChannel: string; onboardTitle: string; onboardBody: string; onboardCta: string;
   privacy: string; disclaimer: string; language: string; fng: string; market: string;
   refreshing: string; feedLockHeader: string;
+  channel: string; channelTabSub: string; openInTelegram: string; joinChannel: string;
+  skipForNow: string; livePinnedTitle: string; livePinnedSub: string; liveStickyCta: string;
+  socialProof: (n: number) => string; channelInside: string;
+  channelPost1Title: string; channelPost1Sub: string;
+  channelPost2Title: string; channelPost2Sub: string;
+  channelPost3Title: string; channelPost3Sub: string;
 }
 
 const dict: Record<Lang, Dict> = {
