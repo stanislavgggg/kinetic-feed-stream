@@ -179,7 +179,7 @@ function HeroCard({ item, lang }: { item: NewsItem; lang: Lang }) {
         </div>
       )}
       <div className="relative -mt-12 p-4">
-        <h2 className="display text-[26px] leading-[1.02] uppercase">
+        <h2 className="display leading-[1.02] uppercase" style={{ fontSize: "clamp(22px, 6.4vw, 28px)" }}>
           <span className="headline-gradient">{item.title}</span>
         </h2>
         {item.summary && (
