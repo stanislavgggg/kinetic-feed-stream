@@ -44,8 +44,8 @@ export function LiveView() {
                 <button
                   key={g}
                   onClick={() => { haptic("selection"); setGame(g); }}
-                  className={`press-btn h-9 rounded-full px-4 text-sm lower-third whitespace-nowrap border transition ${
-                    active ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:text-foreground"
+                  className={`press-btn h-9 rounded-full px-4 text-sm lower-third whitespace-nowrap transition ${
+                    active ? "chip-active" : "chip-idle hover:text-foreground"
                   }`}
                 >
                   {g}
@@ -59,11 +59,11 @@ export function LiveView() {
       <div className="flex flex-col gap-3">
         {q.isLoading && Array.from({ length: 4 }).map((_, i) => <Skel key={i} />)}
         {!q.isLoading && filtered.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-            <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full border border-border bg-card">
+          <div className="surface-card rounded-2xl p-10 text-center">
+            <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full btn-signal-soft">
               <span className="live-dot" />
             </div>
-            {q.isError ? t.signalLost : t.emptyLive}
+            <div className="text-sm text-muted-foreground">{q.isError ? t.signalLost : t.emptyLive}</div>
           </div>
         )}
         {filtered.map((m, i) => (
@@ -82,7 +82,7 @@ export function LiveView() {
 }
 
 function Skel() {
-  return <div className="h-32 animate-pulse rounded-2xl border border-border bg-card" />;
+  return <div className="h-32 animate-pulse rounded-2xl surface-card" />;
 }
 
 function MatchCard({ m, delay, cta, liveLabel, onTap }: { m: BackendMatch; delay: number; cta: string; liveLabel: string; onTap: () => void }) {
@@ -91,15 +91,14 @@ function MatchCard({ m, delay, cta, liveLabel, onTap }: { m: BackendMatch; delay
   const leading = s1 === s2 ? 0 : s1 > s2 ? 1 : 2;
   return (
     <div
-      className="card-in edge-glow relative overflow-hidden rounded-2xl border border-border bg-card p-4"
+      className="card-in edge-glow relative overflow-hidden rounded-2xl surface-card p-4"
       style={{ animationDelay: `${delay}ms` }}
     >
-      {/* radial signal wash */}
       <div aria-hidden className="pointer-events-none absolute -top-16 -right-12 h-40 w-40 rounded-full bg-signal/15 blur-3xl" />
 
       <div className="relative flex items-center justify-between text-[11px]">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="lower-third rounded-md border border-signal/30 bg-signal/10 px-1.5 py-0.5 text-signal">
+          <span className="lower-third rounded-md btn-signal-soft px-1.5 py-0.5">
             {m.game?.toUpperCase() || "GAME"}
           </span>
           {m.league && <span className="text-muted-foreground truncate max-w-[40vw]">{m.league}</span>}
@@ -113,10 +112,10 @@ function MatchCard({ m, delay, cta, liveLabel, onTap }: { m: BackendMatch; delay
         <div className={`text-right truncate ${leading === 1 ? "text-foreground" : "text-muted-foreground"}`}>
           <div className="display text-xl uppercase truncate">{m.team1}</div>
         </div>
-        <div className="display tabular-nums text-3xl mono inline-flex items-baseline gap-1">
-          <span className={leading === 1 ? "text-signal" : ""}>{s1}</span>
-          <span className="text-muted-foreground/70 text-2xl">:</span>
-          <span className={leading === 2 ? "text-signal" : ""}>{s2}</span>
+        <div className="display tabular-nums text-[34px] mono inline-flex items-baseline gap-1 leading-none">
+          <span className={leading === 1 ? "signal-text" : ""}>{s1}</span>
+          <span className="text-muted-foreground/60 text-2xl">:</span>
+          <span className={leading === 2 ? "signal-text" : ""}>{s2}</span>
         </div>
         <div className={`text-left truncate ${leading === 2 ? "text-foreground" : "text-muted-foreground"}`}>
           <div className="display text-xl uppercase truncate">{m.team2}</div>
@@ -129,7 +128,7 @@ function MatchCard({ m, delay, cta, liveLabel, onTap }: { m: BackendMatch; delay
 
       <button
         onClick={onTap}
-        className="press-btn signal-sweep relative mt-4 h-11 w-full overflow-hidden rounded-lg bg-signal text-signal-foreground lower-third glow-signal"
+        className="press-btn signal-sweep relative mt-4 h-11 w-full overflow-hidden rounded-lg btn-signal lower-third"
       >
         {cta}
       </button>

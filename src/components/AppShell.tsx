@@ -19,10 +19,19 @@ export function AppShell({ children }: { children: ReactNode }) {
   if (!onboarded && !isPrivacy) return <Onboarding />;
 
   return (
-    <div className="relative min-h-[100dvh] pb-[calc(72px+env(safe-area-inset-bottom))]">
+    <div className="relative min-h-[100dvh] pb-[calc(76px+env(safe-area-inset-bottom))]">
       <Header />
       <Ticker />
       <main className="wrap pt-3">{children}</main>
+      {/* fade behind nav */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-30 h-24"
+        style={{
+          background:
+            "linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--background) 70%, transparent) 35%, var(--background) 90%)",
+        }}
+      />
       <BottomNav newsLabel={t.news} liveLabel={t.live} path={path} />
     </div>
   );
@@ -34,17 +43,23 @@ function BottomNav({ newsLabel, liveLabel, path }: { newsLabel: string; liveLabe
     { to: "/live", label: liveLabel, icon: Radio, active: path.startsWith("/live") },
   ] as const;
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed inset-x-0 bottom-0 z-40 glass pb-[env(safe-area-inset-bottom)]">
+      <div className="hr-gradient absolute inset-x-0 top-0" />
       <div className="wrap grid grid-cols-2">
         {items.map(({ to, label, icon: Icon, active }) => (
           <Link
             key={to}
             to={to}
             onClick={() => haptic("selection")}
-            className={`press-btn flex h-[64px] flex-col items-center justify-center gap-1 ${active ? "text-foreground" : "text-muted-foreground"}`}
+            className={`press-btn flex h-[68px] flex-col items-center justify-center gap-1 ${active ? "text-foreground" : "text-muted-foreground hover:text-foreground/90"}`}
           >
             <span className="relative">
-              {active && <span className="absolute -top-3 left-1/2 h-[3px] w-8 -translate-x-1/2 rounded-full bg-signal" />}
+              {active && (
+                <span
+                  className="absolute -top-3 left-1/2 h-[3px] w-9 -translate-x-1/2 rounded-full"
+                  style={{ background: "var(--gradient-signal)", boxShadow: "0 0 12px color-mix(in oklab, var(--signal) 60%, transparent)" }}
+                />
+              )}
               <Icon size={22} strokeWidth={active ? 2.2 : 1.6} />
             </span>
             <span className="lower-third">{label}</span>

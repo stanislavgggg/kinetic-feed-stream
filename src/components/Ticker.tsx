@@ -16,7 +16,6 @@ function fmtPct(n: number | null): string {
 
 export function Ticker() {
   const { t } = useApp();
-  // Pull live matches & news (cached by other surfaces).
   const news = useQuery({
     queryKey: ["news", "all"],
     queryFn: ({ signal }) => api.news("all", signal),
@@ -53,10 +52,10 @@ export function Ticker() {
       {items.map((it) => (
         <span key={`${key}-${it.key}`} className="inline-flex items-center gap-2 text-[12px]">
           <span className="text-muted-foreground lower-third">{matches.length ? t.liveDot : t.market}</span>
-          <span className="text-foreground">{it.left}</span>
+          <span className="text-foreground mono">{it.left}</span>
           <span
             className={
-              it.tone === "up" ? "text-up" : it.tone === "down" ? "text-down" : "text-signal"
+              "mono " + (it.tone === "up" ? "text-up" : it.tone === "down" ? "text-down" : "text-signal")
             }
           >
             {it.right}
@@ -67,11 +66,13 @@ export function Ticker() {
   );
 
   return (
-    <div className="border-y border-border bg-card/60 backdrop-blur overflow-hidden">
+    <div className="relative glass overflow-hidden">
+      <div className="hr-gradient absolute inset-x-0 top-0" />
       <div className="ticker-track py-1.5">
         {renderRow("a")}
         {renderRow("b")}
       </div>
+      <div className="hr-gradient absolute inset-x-0 bottom-0" />
     </div>
   );
 }
