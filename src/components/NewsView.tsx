@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Lock } from "lucide-react";
+import { Lock, ArrowUpRight } from "lucide-react";
 import { api, openChannelFlow, type NewsCategory, type NewsItem } from "@/lib/funnel";
 import { useApp } from "./AppProviders";
 import { relTime, type Lang } from "@/lib/i18n";
@@ -20,6 +20,11 @@ const catColor: Record<NewsItem["category"], string> = {
   casino: "text-cat-casino",
   esports: "text-cat-esports",
 };
+const catBg: Record<NewsItem["category"], string> = {
+  crypto: "bg-cat-crypto/15 border-cat-crypto/40",
+  casino: "bg-cat-casino/15 border-cat-casino/40",
+  esports: "bg-cat-esports/15 border-cat-esports/40",
+};
 
 export function NewsView() {
   const { t, lang, config, gateLocked } = useApp();
@@ -33,7 +38,6 @@ export function NewsView() {
     staleTime: 60_000,
   });
 
-  // Fire cta_view once when the lock becomes visible.
   useEffect(() => {
     if (lockViewed || !gateLocked || !q.data) return;
     if ((q.data.items?.length ?? 0) > FREE_COUNT) {
@@ -47,6 +51,8 @@ export function NewsView() {
   const updated = q.data?.updated_at;
   const showLock = gateLocked && items.length > FREE_COUNT;
   const freeItems = showLock ? items.slice(0, FREE_COUNT) : items;
+  const hero = freeItems[0];
+  const rest = freeItems.slice(1);
   const lockedItems = showLock ? items.slice(FREE_COUNT, FREE_COUNT + 6) : [];
 
   return (
@@ -61,10 +67,10 @@ export function NewsView() {
               <button
                 key={c.key}
                 onClick={() => { haptic("selection"); setCat(c.key); }}
-                className={`press-btn h-9 rounded-full px-4 text-sm lower-third whitespace-nowrap border ${
+                className={`press-btn h-9 rounded-full px-4 text-sm lower-third whitespace-nowrap border transition ${
                   active
-                    ? "bg-foreground text-background border-foreground"
-                    : "border-border text-muted-foreground"
+                    ? "bg-foreground text-background border-foreground shadow-[0_6px_20px_-8px_rgba(0,0,0,0.6)]"
+                    : "border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {c.label(lang, t)}
@@ -75,19 +81,28 @@ export function NewsView() {
       </div>
 
       <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
-        <span>{updated ? `${t.updated} ${relTime(updated, lang)}` : q.isFetching ? t.refreshing : ""}</span>
-        <span className="lower-third">{q.isFetching && !q.isLoading ? "●" : ""}</span>
+        <span className="mono">{updated ? `${t.updated} ${relTime(updated, lang)}` : q.isFetching ? t.refreshing : ""}</span>
+        <span className="lower-third inline-flex items-center gap-1">
+          {q.isFetching ? <><span className="live-dot" /> {t.refreshing}</> : null}
+        </span>
       </div>
 
       <div className="mt-3 flex flex-col gap-3">
-        {q.isLoading && Array.from({ length: 5 }).map((_, i) => <NewsSkeleton key={i} />)}
+        {q.isLoading && (
+          <>
+            <HeroSkeleton />
+            {Array.from({ length: 4 }).map((_, i) => <NewsSkeleton key={i} />)}
+          </>
+        )}
 
         {!q.isLoading && items.length === 0 && (
           <EmptyState text={q.isError ? t.signalLost : t.emptyNews} />
         )}
 
-        {freeItems.map((it, i) => (
-          <NewsCard key={String(it.id)} item={it} lang={lang} delay={i * 40} />
+        {hero && <HeroCard item={hero} lang={lang} />}
+
+        {rest.map((it, i) => (
+          <NewsCard key={String(it.id)} item={it} lang={lang} delay={i * 50} />
         ))}
 
         {showLock && (
@@ -109,6 +124,10 @@ export function NewsView() {
   );
 }
 
+function HeroSkeleton() {
+  return <div className="h-64 animate-pulse rounded-2xl border border-border bg-card" />;
+}
+
 function NewsSkeleton() {
   return (
     <div className="rounded-xl border border-border bg-card p-4 animate-pulse">
@@ -116,6 +135,64 @@ function NewsSkeleton() {
       <div className="mt-3 h-4 w-3/4 bg-muted rounded" />
       <div className="mt-2 h-3 w-1/2 bg-muted rounded" />
     </div>
+  );
+}
+
+function HeroCard({ item, lang }: { item: NewsItem; lang: Lang }) {
+  const [imgOk, setImgOk] = useState(!!item.image);
+  const onTap = () => {
+    haptic("light");
+    api.event("cta_tap", { surface: "feed_hero", source: item.source });
+    openExternal(item.url);
+  };
+  return (
+    <button
+      onClick={onTap}
+      className="card-in edge-glow group relative overflow-hidden rounded-2xl border border-border bg-card text-left press-btn"
+    >
+      {item.image && imgOk ? (
+        <div className="relative aspect-[16/10] w-full overflow-hidden">
+          <img
+            src={item.image}
+            alt=""
+            onError={() => setImgOk(false)}
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/55 to-transparent" />
+          <div className="absolute left-3 top-3 flex items-center gap-2">
+            <span className={`lower-third rounded-md border px-2 py-1 ${catBg[item.category]} ${catColor[item.category]}`}>
+              ● {item.category.toUpperCase()}
+            </span>
+            <span className="lower-third rounded-md border border-signal/40 bg-signal/15 px-2 py-1 text-signal inline-flex items-center gap-1">
+              <span className="live-dot" /> TOP
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="relative h-40 w-full overflow-hidden tape-stripe">
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+        </div>
+      )}
+      <div className="relative -mt-10 p-4">
+        <h2 className="display text-[26px] leading-[1.02] uppercase">
+          <span className="headline-gradient">{item.title}</span>
+        </h2>
+        {item.summary && (
+          <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{item.summary}</p>
+        )}
+        <div className="mt-3 flex items-center justify-between text-[11px]">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <span className="truncate max-w-[40vw]">{item.source}</span>
+            <span>·</span>
+            <span className="mono">{relTime(item.published_at, lang)}</span>
+          </div>
+          <span className="inline-flex items-center gap-1 text-signal lower-third">
+            Read <ArrowUpRight size={12} />
+          </span>
+        </div>
+      </div>
+    </button>
   );
 }
 
@@ -128,15 +205,16 @@ function NewsCard({ item, lang, delay }: { item: NewsItem; lang: Lang; delay: nu
   return (
     <button
       onClick={onTap}
-      className="press-btn card-in text-left rounded-xl border border-border bg-card p-4 active:bg-secondary"
+      className="press-btn card-in text-left rounded-xl border border-border bg-card/90 p-4 hover:border-foreground/20 transition relative overflow-hidden"
       style={{ animationDelay: `${delay}ms` }}
     >
+      <span className={`absolute left-0 top-0 h-full w-[3px] ${item.category === "crypto" ? "bg-cat-crypto" : item.category === "casino" ? "bg-cat-casino" : "bg-cat-esports"}`} />
       <div className="flex items-center gap-2 text-[11px]">
         <span className={`lower-third ${catColor[item.category]}`}>● {item.category.toUpperCase()}</span>
         <span className="text-muted-foreground">·</span>
         <span className="text-muted-foreground truncate">{item.source}</span>
         <span className="text-muted-foreground">·</span>
-        <span className="text-muted-foreground">{relTime(item.published_at, lang)}</span>
+        <span className="text-muted-foreground mono">{relTime(item.published_at, lang)}</span>
       </div>
       <div className="mt-2 flex gap-3">
         <div className="flex-1 min-w-0">
@@ -155,13 +233,16 @@ function Thumb({ src }: { src: string }) {
   const [ok, setOk] = useState(true);
   if (!ok) return null;
   return (
-    <img
-      src={src}
-      onError={() => setOk(false)}
-      alt=""
-      className="h-20 w-20 flex-none rounded-lg object-cover border border-border"
-      loading="lazy"
-    />
+    <div className="relative h-20 w-20 flex-none overflow-hidden rounded-lg border border-border">
+      <img
+        src={src}
+        onError={() => setOk(false)}
+        alt=""
+        className="h-full w-full object-cover"
+        loading="lazy"
+      />
+      <div className="absolute inset-0 bg-gradient-to-tr from-background/30 to-transparent" />
+    </div>
   );
 }
 
@@ -176,8 +257,8 @@ function MarketStrip({
   const fng = market.fng;
   const fngColor =
     !fng ? "" :
-    fng.value >= 75 ? "bg-up/15 text-up border-up/30" :
-    fng.value <= 25 ? "bg-down/15 text-down border-down/30" :
+    fng.value >= 75 ? "bg-up/15 text-up border-up/40" :
+    fng.value <= 25 ? "bg-down/15 text-down border-down/40" :
     "bg-muted text-muted-foreground border-border";
   return (
     <div className="scroll-x -mx-4 px-4">
@@ -185,19 +266,19 @@ function MarketStrip({
         {fng && (
           <div className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-3 h-9 ${fngColor}`}>
             <span className="lower-third">{fngLabel}</span>
-            <span className="text-sm font-bold tabular-nums">{fng.value}</span>
+            <span className="text-sm font-bold tabular-nums mono">{fng.value}</span>
             <span className="text-[11px] opacity-80">{fng.label}</span>
           </div>
         )}
         {market.coins.map((c) => {
           const up = (c.change_24h ?? 0) >= 0;
           return (
-            <div key={c.symbol} className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-card px-3 h-9">
+            <div key={c.symbol} className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-card/80 backdrop-blur px-3 h-9">
               <span className="lower-third">{c.symbol.toUpperCase()}</span>
-              <span className="text-sm tabular-nums">
+              <span className="text-sm tabular-nums mono">
                 {c.price != null ? (c.price >= 1 ? c.price.toLocaleString(undefined, { maximumFractionDigits: 2 }) : c.price.toPrecision(3)) : "—"}
               </span>
-              <span className={`text-[11px] tabular-nums ${up ? "text-up" : "text-down"}`}>
+              <span className={`text-[11px] tabular-nums mono ${up ? "text-up" : "text-down"}`}>
                 {c.change_24h != null ? `${up ? "▲" : "▼"} ${Math.abs(c.change_24h).toFixed(2)}%` : ""}
               </span>
             </div>
@@ -221,7 +302,7 @@ function LockedStack({
   return (
     <div className="relative mt-1">
       <div className="lower-third mb-2 text-muted-foreground">{t.feedLockHeader}</div>
-      <div className="relative overflow-hidden rounded-xl border border-border bg-card">
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-card edge-glow">
         <div className="space-y-px">
           {items.map((it) => (
             <div key={String(it.id)} className="p-4 border-b border-border/60">
@@ -231,18 +312,18 @@ function LockedStack({
             </div>
           ))}
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/70 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/75 to-background" />
         <button
           ref={ref}
           onClick={onTap}
           className="press-btn absolute inset-0 flex flex-col items-center justify-end gap-3 p-6 text-center"
         >
-          <div className="grid h-14 w-14 place-items-center rounded-full bg-signal/15 text-signal border border-signal/40">
+          <div className="grid h-14 w-14 place-items-center rounded-full bg-signal/15 text-signal border border-signal/40 glow-signal">
             <Lock size={26} />
           </div>
-          <h3 className="display text-2xl uppercase">{t.fullReadsInChannel}</h3>
+          <h3 className="display text-2xl uppercase headline-gradient">{t.fullReadsInChannel}</h3>
           <p className="text-sm text-muted-foreground">{t.stickySub}</p>
-          <span className="press-btn mt-2 mb-6 inline-flex h-12 items-center rounded-lg bg-signal px-5 text-signal-foreground lower-third">
+          <span className="press-btn signal-sweep relative overflow-hidden mt-2 mb-6 inline-flex h-12 items-center rounded-lg bg-signal px-5 text-signal-foreground lower-third glow-signal">
             {t.subscribe}
           </span>
         </button>
@@ -255,10 +336,10 @@ function StickyCTA({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <div className="fixed inset-x-0 bottom-[64px] z-30 pointer-events-none pb-[env(safe-area-inset-bottom)]">
       <div className="wrap pointer-events-none">
-        <div className="pointer-events-auto mb-2 rounded-xl border border-border bg-background/90 backdrop-blur p-2 shadow-2xl">
+        <div className="pointer-events-auto mb-2 rounded-2xl glass p-2 shadow-2xl">
           <button
             onClick={onClick}
-            className="press-btn h-12 w-full rounded-lg bg-signal text-signal-foreground lower-third"
+            className="press-btn signal-sweep relative overflow-hidden h-12 w-full rounded-lg bg-signal text-signal-foreground lower-third glow-signal"
           >
             {label}
           </button>
