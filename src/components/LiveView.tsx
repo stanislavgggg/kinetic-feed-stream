@@ -128,13 +128,6 @@ function MatchCard({ m, delay, cta, liveLabel, onTap }: { m: BackendMatch; delay
         <div className="relative mt-2 text-center lower-third text-muted-foreground mono">{m.format}</div>
       )}
 
-      <button
-        onClick={onTap}
-        className="press-btn signal-sweep relative mt-4 w-full overflow-hidden btn-premium"
-      >
-        {cta}
-      </button>
-
     </div>
   );
 }
